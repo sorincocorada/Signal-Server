@@ -27,6 +27,7 @@ import org.whispersystems.textsecuregcm.util.Constants;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.FileReader;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
@@ -105,13 +106,17 @@ public class RetryingApnsClient {
   }
 
   private static X509Certificate initializeCertificate(String pemCertificate) throws IOException {
-    PEMReader reader = new PEMReader(new InputStreamReader(new ByteArrayInputStream(pemCertificate.getBytes())));
+    FileReader fr = new FileReader(pemCertificate);
+    PEMReader reader = new PEMReader(fr);
     return (X509Certificate) reader.readObject();
+
   }
 
   private static PrivateKey initializePrivateKey(String pemKey) throws IOException {
-    PEMReader reader = new PEMReader(new InputStreamReader(new ByteArrayInputStream(pemKey.getBytes())));
-    return ((KeyPair) reader.readObject()).getPrivate();
+    FileReader fr = new FileReader(pemKey);
+    PEMReader reader = new PEMReader(fr);
+    return (PrivateKey) reader.readObject();
+
   }
 
   private static final class ResponseHandler implements GenericFutureListener<io.netty.util.concurrent.Future<PushNotificationResponse<SimpleApnsPushNotification>>> {
